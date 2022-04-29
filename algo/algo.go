@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	debug = false
+	debug = true
 )
 
 func read_file(f *os.File) []string {
@@ -18,20 +18,14 @@ func read_file(f *os.File) []string {
 	var err error
 	var line string
 
-	line, err = file.ReadString('\n')
-	for ok := true; ok; line, err = file.ReadString('\n') {
-		if err != nil {
-			if err == io.EOF {
-				ret = append(ret, line)
-				ok = false
-				continue
-			} else {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-		}
-
+	for line, err = file.ReadString('\n'); err == nil; line, err = file.ReadString('\n') {
 		ret = append(ret, line)
+	}
+	if err == io.EOF {
+		ret = append(ret, line)
+	} else {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	return ret
