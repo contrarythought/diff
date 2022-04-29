@@ -19,10 +19,12 @@ func read_file(f *os.File) []string {
 	var line string
 
 	line, err = file.ReadString('\n')
-	for {
+	for ok := true; ok; line, err = file.ReadString('\n') {
 		if err != nil {
 			if err == io.EOF {
-				break
+				ret = append(ret, line)
+				ok = false
+				continue
 			} else {
 				fmt.Println(err)
 				os.Exit(1)
@@ -30,11 +32,9 @@ func read_file(f *os.File) []string {
 		}
 
 		ret = append(ret, line)
-		line, err = file.ReadString('\n')
 	}
 
 	return ret
-
 }
 
 func Longest_common_sub(f1 *os.File, f2 *os.File) {
