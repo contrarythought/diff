@@ -24,7 +24,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	algo.Longest_common_sub(file1, file2)
+	var res []string = algo.Longest_common_sub(file1, file2)
+
+	for _, line := range res {
+		fmt.Print(line)
+	}
 
 	file2.Close()
 	file1.Close()
