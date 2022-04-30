@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	debug = true
+	debug = false
 )
 
 func read_file(f *os.File) []string {
@@ -31,7 +31,14 @@ func read_file(f *os.File) []string {
 	return ret
 }
 
-func Longest_common_sub(f1 *os.File, f2 *os.File) {
+func max(a uint, b uint) uint {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func Longest_common_sub(f1 *os.File, f2 *os.File) []string {
 
 	var f1_array []string = read_file(f1)
 	var f2_array []string = read_file(f2)
@@ -48,4 +55,34 @@ func Longest_common_sub(f1 *os.File, f2 *os.File) {
 		}
 	}
 
+	// TODO - understand this
+	m, n := len(f1_array), len(f2_array)
+	P := make([]uint, (m+1)*(n+1))
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if f1_array[i-1] == f2_array[j-1] {
+				P[i*(n+1)+j] = 1 + P[(i-1)*(n+1)+(j-1)]
+			} else {
+				P[i*(n+1)+j] = max(P[i*(n+1)+(j-1)], P[(i-1)*(n+1)+j])
+			}
+		}
+	}
+
+	longest := P[m*(n+1)+n]
+	i, j := m, n
+	subsequence := make([]string, longest)
+	for k := longest; k > 0; {
+		if P[i*(n+1)+j] == P[i*(n+1)+(j-1)] {
+			j-- // the two strings end with the same char
+		} else if P[i*(n+1)+j] == P[(i-1)*(n+1)+j] {
+			i--
+		} else if P[i*(n+1)+j] == 1+P[(i-1)*(n+1)+(j-1)] {
+			subsequence[k-1] = f1_array[i-1]
+			k--
+			i--
+			j--
+		}
+	}
+
+	return subsequence
 }
